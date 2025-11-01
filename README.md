@@ -1,4 +1,4 @@
-# 🎨 Material All Mangle Names
+# 🎨 material-all-mangle-names
 
 **Transform your @material/web custom elements to unique names for Rollup builds!** 🚀
 
