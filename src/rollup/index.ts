@@ -49,7 +49,7 @@ export function mdMangle(options: Partial<MdMangleOptions> = {}): Plugin {
 
 			for (const [name, replaceName] of renameMap) {
 				// Replace all occurrences not followed by a dot (to avoid .js, .ts, etc.)
-				const regex = new RegExp(`${name}(?!\\.)`, 'g')
+				const regex = new RegExp(`(?<!-)${name}(?!\\.)`, 'g')
 				code = code.split(regex).join(replaceName)
 			}
 
