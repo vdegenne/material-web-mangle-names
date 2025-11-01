@@ -1,6 +1,6 @@
 {
 	"name": "material-all-mangle-names",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "",
 	"type": "module",
 	"exports": {
@@ -14,7 +14,9 @@
 		}
 	},
 	"types": "",
-	"files": [],
+	"files": [
+		"./lib/"
+	],
 	"scripts": {
 		"build": "wireit"
 	},
