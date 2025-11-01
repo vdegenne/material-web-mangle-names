@@ -2,23 +2,17 @@
 
 **Transform @material/web element to unique names in your Rollup builds!** 🚀
 
----
-
 ## 🔹 What it does
 
 `material-all-mangle-names` is a **Rollup plugin** that automatically **renames all @material/web custom elements** in your code (e.g., `<md-icon>`, `<md-elevated-button>`) with a unique suffix.
 
 This helps avoid **name collisions** when injecting custom elements into pages or content scripts, without breaking your imports! 🛡️
 
----
-
 ## 📦 Installation
 
 ```bash
 npm i -D material-all-mangle-names
 ```
-
----
 
 ## ⚡ Usage
 
@@ -44,28 +38,13 @@ export default {
 
 ✅ Automatically includes `node_modules/@material/web` files even if you exclude node_modules.
 
----
-
-## 🛠️ Options
-
-| Option    | Type    | Default   | Description           |
-| --------- | ------- | --------- | --------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `include` | `string | string[]` | `undefined`           | Files to include. Keep in mind, files under `node_modules/@material/web/` (recursive) are always included. 🌟 |
-| `exclude` | `string | string[]` | `['node_modules/**']` | Files to ignore. Node_modules is automatically ignored by default. Re-include if needed. ❌                   |
-
----
-
 ## 📝 License
 
 This plugin is released under the **MIT License**. Free to use, modify, and distribute! 🎉
 
----
-
 ## 🙏 Thanks
 
 Big thanks to the amazing **@material/web team** for making such awesome web components! 💖
-
----
 
 ## ✨ Notes
 
