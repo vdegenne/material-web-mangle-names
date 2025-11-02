@@ -1,6 +1,6 @@
 # 🎨 material-web-mangle-names
 
-**Transform @material/web element to unique names in your Rollup builds!** 🚀
+**Transform @material/web elements to unique names in your Rollup builds!** 🚀
 
 ## 🔹 What it does
 
