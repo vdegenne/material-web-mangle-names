@@ -33,7 +33,7 @@ interface MdMangleOptions {
  * If you redefine "include" make sure you don't include all node_modules again (e.g. with `** /*.js`)
  * or it will slow down the build time.
  */
-export function mdMangle(options: Partial<MdMangleOptions>): Plugin {
+export function mdMangle(options?: Partial<MdMangleOptions>): Plugin {
 	const _options: MdMangleOptions = {
 		include: ['./{src,lib}/**/*.{ts,js}'],
 		exclude: null,
