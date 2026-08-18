@@ -2,8 +2,13 @@ import {createFilter, type FilterPattern} from '@rollup/pluginutils'
 import {MdElementsImportsMap} from 'mwc3-back-helpers/md-elements.js'
 import {type Plugin} from 'rollup'
 
-/** all available element (e.g. "md-icon", "md-elevated-button", etc...) */
-const availableElements = Object.keys(MdElementsImportsMap)
+/**
+ * All available elements (e.g. "md-icon", "md-elevated-button", etc...).
+ * Sorted to avoid partial replacements.
+ */
+const availableElements = Object.keys(MdElementsImportsMap).sort(
+	(a, b) => b.length - a.length,
+)
 
 interface MdMangleOptions {
 	/**
@@ -48,11 +53,7 @@ export function mdMangle(options: Partial<MdMangleOptions> = {}): Plugin {
 	const filter = createFilter(include, _options.exclude)
 
 	const buildId = Date.now().toString()
-
-	// longest first avoids partial replacements (e.g., md-icon-button before md-icon)
-	const renameMap = [...availableElements]
-		.sort((a, b) => b.length - a.length)
-		.map((name) => [name, `${name}-${buildId}`])
+	const renameMap: Record<string, [RegExp, string]> = Object.create(null)
 
 	return {
 		name: 'material-all-mangle-names',
@@ -61,10 +62,19 @@ export function mdMangle(options: Partial<MdMangleOptions> = {}): Plugin {
 
 			let modified = code
 
-			for (const [name, replaceName] of renameMap) {
-				// Replace all occurrences not followed by a dot (to avoid .js, .ts, etc.)
-				const regex = new RegExp(`(?<!-)${name}(?!\\.)`, 'g')
-				modified = modified.split(regex).join(replaceName)
+			for (const name of availableElements) {
+				let replacement = renameMap[name]
+
+				if (!replacement) {
+					replacement = [
+						// new RegExp(`(?<!-)${name}(?!\\.)`, 'g'),
+						new RegExp(`(?<!-)${name}`, 'g'),
+						`${name}-${buildId}`,
+					]
+					renameMap[name] = replacement
+				}
+
+				modified = modified.replace(replacement[0], replacement[1])
 			}
 
 			return {code: modified, map: null}
