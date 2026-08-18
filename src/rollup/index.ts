@@ -67,8 +67,7 @@ export function mdMangle(options: Partial<MdMangleOptions> = {}): Plugin {
 
 				if (!replacement) {
 					replacement = [
-						// new RegExp(`(?<!-)${name}(?!\\.)`, 'g'),
-						new RegExp(`(?<!-)${name}`, 'g'),
+						new RegExp(`(?<!-)${name}(?!\\.)`, 'g'),
 						`${name}-${buildId}`,
 					]
 					renameMap[name] = replacement
