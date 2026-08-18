@@ -29,8 +29,8 @@ export default {
 	},
 	plugins: [
 		mdMangle({
-			include: ['src/**/*'], // optional, files to include 🌟
-			exclude: ['node_modules/**'], // optional, files to exclude ❌
+			include: ['./lib/**/*.js'], // optional, files to include 🌟
+			exclude: [], // optional, files to exclude ❌
 		}),
 	],
 }
