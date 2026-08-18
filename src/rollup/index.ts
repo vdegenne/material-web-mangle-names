@@ -1,6 +1,6 @@
-import {type Plugin} from 'rollup'
-import {createFilter} from '@rollup/pluginutils'
+import {createFilter, type FilterPattern} from '@rollup/pluginutils'
 import {MdElementsImportsMap} from 'mwc3-back-helpers/md-elements.js'
+import {type Plugin} from 'rollup'
 
 /** all available element (e.g. "md-icon", "md-elevated-button", etc...) */
 const availableElements = Object.keys(MdElementsImportsMap)
@@ -12,7 +12,7 @@ interface MdMangleOptions {
 	 *
 	 * @default undefined
 	 */
-	include: string | string[]
+	include: FilterPattern
 	/**
 	 * node_modules is automatically ignored.
 	 * If you provide a new value, make sure to reinclude node_modules,
@@ -21,39 +21,53 @@ interface MdMangleOptions {
 	 *
 	 * @default everything in node_modules
 	 */
-	exclude: string | string[]
+	exclude: FilterPattern
 }
 
+/**
+ * If you redefine "include" make sure you don't include all node_modules again (e.g. with `** /*.js`)
+ * or it will slow down the build time.
+ */
 export function mdMangle(options: Partial<MdMangleOptions> = {}): Plugin {
-	const _o: MdMangleOptions = {
-		include: [],
-		exclude: ['node_modules/**'],
+	const _options: MdMangleOptions = {
+		include: ['./{src,lib}/**/*.{ts,js}'],
+		exclude: null,
 		...options,
 	}
 
-	const filter = createFilter(_o.include, _o.exclude)
-	const randomId = Math.floor(Math.random() * 100000).toString()
+	const include =
+		_options.include === null
+			? []
+			: Array.isArray(_options.include)
+				? [..._options.include]
+				: [_options.include]
+
+	include.push(/@material\/web/) // Always include @material/web elements
+	include.push(/FormBuilder\.js/) // from @vdegenne/forms
+
+	const filter = createFilter(include, _options.exclude)
+
+	const buildId = Date.now().toString()
 
 	// longest first avoids partial replacements (e.g., md-icon-button before md-icon)
-	const renameMap: [string, string][] = availableElements
+	const renameMap = [...availableElements]
 		.sort((a, b) => b.length - a.length)
-		.map((name) => [name, `${name}-${randomId}`])
+		.map((name) => [name, `${name}-${buildId}`])
 
 	return {
 		name: 'material-all-mangle-names',
-		transform(_code: string, id: string) {
-			// Only process files matching filter or always include @material/web
-			if (!id.includes('@material/web') && !filter(id)) return null
+		transform(code: string, id: string) {
+			if (!filter(id)) return null
 
-			let code = _code
+			let modified = code
 
 			for (const [name, replaceName] of renameMap) {
 				// Replace all occurrences not followed by a dot (to avoid .js, .ts, etc.)
 				const regex = new RegExp(`(?<!-)${name}(?!\\.)`, 'g')
-				code = code.split(regex).join(replaceName)
+				modified = modified.split(regex).join(replaceName)
 			}
 
-			return {code, map: null}
+			return {code: modified, map: null}
 		},
 	}
 }
